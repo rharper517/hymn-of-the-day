@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7f6ef">
+<title>Mom's Hymn of the Day</title>
+<style>
+  :root {
+    --cream: #f7f6ef;
+    --paper: #fffef9;
+    --sage: #71836d;
+    --sage-dark: #52664f;
+    --ink: #343b32;
+    --muted: #777d70;
+    --line: #e5e6da;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; padding: 28px 16px 44px;
+    background: var(--cream); color: var(--ink);
+    font-family: Georgia, "Times New Roman", serif;
+  }
+  main { max-width: 680px; margin: 0 auto; }
+  header { text-align: center; padding: 24px 12px 22px; }
+  .sprig { color: var(--sage); font-size: 26px; letter-spacing: 9px; }
+  h1 { margin: 12px 0 8px; font-size: clamp(2rem, 7vw, 3rem); font-weight: 400; }
+  .subtitle { margin: 0; color: var(--muted); font-style: italic; font-size: 1.05rem; }
+  .daily {
+    background: var(--paper); border: 1px solid var(--line); border-radius: 20px;
+    padding: 30px 22px; text-align: center; box-shadow: 0 8px 28px #48533b0b;
+  }
+  .eyebrow { color: var(--sage-dark); font: 600 .72rem/1.4 Arial, sans-serif; letter-spacing: .16em; }
+  #date { margin: 8px 0 22px; color: var(--muted); font: .9rem Arial, sans-serif; }
+  #today-title { margin: 0 auto 20px; font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight: 400; }
+  .play {
+    display: inline-block; background: var(--sage-dark); color: white; text-decoration: none;
+    padding: 14px 25px; border-radius: 999px; font: 600 .95rem Arial, sans-serif;
+  }
+  .play:hover { background: #40543e; }
+  .hint { margin: 18px auto 0; max-width: 420px; color: var(--muted); font: .85rem/1.5 Arial, sans-serif; }
+  details { margin-top: 22px; background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 17px 19px; }
+  summary { color: var(--sage-dark); cursor: pointer; font: 600 .95rem Arial, sans-serif; }
+  ol { padding-left: 25px; margin: 15px 0 0; }
+  li { padding: 7px 0; border-bottom: 1px solid #eeeee7; }
+  li:last-child { border-bottom: 0; }
+  li a { color: var(--ink); text-decoration-color: #b6c0ae; text-underline-offset: 3px; }
+  footer { text-align: center; margin-top: 25px; color: var(--muted); font: .78rem/1.5 Arial, sans-serif; }
+  @media (min-width: 560px) { body { padding-top: 44px; } .daily { padding: 40px 32px; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="sprig" aria-hidden="true">❧  ❦  ❧</div>
+    <h1>Mom's Hymn of the Day</h1>
+    <p class="subtitle">A new song of praise for every morning</p>
+  </header>
+
+  <section class="daily" aria-live="polite">
+    <div class="eyebrow">TODAY'S HYMN</div>
+    <div id="date"></div>
+    <h2 id="today-title">Great Is Thy Faithfulness</h2>
+    <a id="play-link" class="play" href="#" target="_blank" rel="noopener">▶ Listen to today's hymn</a>
+    <p class="hint">Choose “Listen” to open a search for a traditional choir recording. You can also browse the full collection below.</p>
+  </section>
+
+  <details>
+    <summary>Browse all 31 hymns</summary>
+    <ol id="hymn-list"></ol>
+  </details>
+
+  <footer>Made with love, for mornings filled with praise.</footer>
+</main>
+
+<script>
+const hymns = [
+  "Great Is Thy Faithfulness",
+  "How Great Thou Art",
+  "It Is Well with My Soul",
+  "Blessed Assurance",
+  "In the Garden",
+  "The Old Rugged Cross",
+  "Holy, Holy, Holy",
+  "To God Be the Glory",
+  "What a Friend We Have in Jesus",
+  "His Eye Is on the Sparrow",
+  "Up from the Grave He Arose",
+  "His Name Is Wonderful",
+  "Amazing Grace",
+  "Because He Lives",
+  "Victory in Jesus",
+  "There Is Power in the Blood",
+  "When We All Get to Heaven",
+  "I'll Fly Away",
+  "Standing on the Promises",
+  "Rock of Ages",
+  "Turn Your Eyes Upon Jesus",
+  "Just As I Am",
+  "I Surrender All",
+  "Sweet By and By",
+  "Leaning on the Everlasting Arms",
+  "The Solid Rock",
+  "What a Day That Will Be",
+  "Count Your Blessings",
+  "Pass Me Not, O Gentle Savior",
+  "Nearer, My God, to Thee",
+  "Love Lifted Me"
+];
+
+// The same hymn is shown all day. It advances at midnight using the local calendar date.
+const now = new Date();
+const start = new Date(now.getFullYear(), 0, 1);
+const dayOfYear = Math.floor((new Date(now.getFullYear(), now.getMonth(), now.getDate()) - start) / 86400000);
+const index = dayOfYear % hymns.length;
+
+function youtubeSearchUrl(title) {
+  const query = encodeURIComponent(title + " traditional church choir hymn");
+  return "https://www.youtube.com/results?search_query=" + query;
+}
+
+document.getElementById("date").textContent =
+  now.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+document.getElementById("today-title").textContent = hymns[index];
+document.getElementById("play-link").href = youtubeSearchUrl(hymns[index]);
+
+const list = document.getElementById("hymn-list");
+hymns.forEach((title) => {
+  const li = document.createElement("li");
+  const a = document.createElement("a");
+  a.href = youtubeSearchUrl(title);
+  a.target = "_blank";
+  a.rel = "noopener";
+  a.textContent = title + " — listen";
+  li.appendChild(a);
+  list.appendChild(li);
+});
+</script>
+</body>
+</html>
